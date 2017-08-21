@@ -125,10 +125,22 @@
 
 <script>
 //  import './../sass/index.scss'
+import io from 'socket.io-client'
 export default {
   data () {
     return {
-      data: ''
+      socket: null
+    }
+  },
+  created () {
+    this.addNameLogin()
+  },
+  methods: {
+    addNameLogin () {
+      this.socket = io('http://localhost:8081')
+      this.socket.on('open', function () {
+        console.log('已连接')
+      })
     }
   }
 }
