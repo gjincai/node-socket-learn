@@ -1,6 +1,13 @@
 <template>
   <div class="c-talk">
-    <div class="talk-cont">
+    <div v-if="!hasUserName" class="talk-name">
+      <div class="name">
+        <h3 class="name-tip">Let us chat together!</h3>
+        <h3 class="name-title">What's your nickname?(<=10)</h3>
+        <input class="name-input" type="text" maxlength="10" v-model="userName" @keyup.enter="addUserName" />
+      </div>
+    </div>
+    <div v-if="hasUserName" class="talk-cont">
       <ul class="cont-ul">
         <li class="mes-li mes-li-left">
           <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
@@ -112,7 +119,7 @@
         </li>
       </ul>
     </div>
-    <div class="talk-edit">
+    <div v-if="hasUserName" class="talk-edit">
       <textarea placeholder="请输入..." class="edit-text"></textarea>
       <div class="edit-btn">
         <a class="btn-a btn-send" href="javascript:;">发送</a>
@@ -129,18 +136,34 @@ import io from 'socket.io-client'
 export default {
   data () {
     return {
+      hasUserName: false,
+      userName: '',
       socket: null
     }
   },
   created () {
-    this.addNameLogin()
+    // this.addNameLogin()
   },
   methods: {
-    addNameLogin () {
-      this.socket = io('http://localhost:8081')
-      this.socket.on('open', function () {
-        console.log('已连接')
+    addUserName () {
+      this.userName = this.userName.replace(/\s+/g, '')
+      if (this.userName.length > 0) {
+        console.log(this.userName.length)
+        this.socket = io.connect('http://localhost:8081')
+        this.socket.emit('join', {userName: this.userName})
+        // change show
+        this.hasUserName = true
+      }
+    },
+    testChat () {
+      this.socket.on('open', function (data) {
+        console.log(data)
       })
+      this.socket.on('news', function (data) {
+        console.log(data)
+        // this.socket.emit('chat', {msg: 'i had got the news'})  // this指向报错
+      })
+      this.socket.emit('chat', {msg: 'i had got the news'})
     }
   }
 }
@@ -160,6 +183,7 @@ p{text-align: justify;}
 html,body{
   height:100%;
 }
+
 .c-talk{
   position: relative;
   box-sizing: border-box;
@@ -168,6 +192,39 @@ html,body{
   overflow: auto;
   margin: 0 auto;
   border: 1px solid #E6E6E6;
+}
+.talk-name{
+  position: fixed;
+  z-index: 99;
+  top:0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: rgba(0,0,0,0.8);
+  .name{
+    width:320px;
+    margin: 50px auto 0;
+    text-align: center;
+    .name-tip{
+      margin-bottom: 15px;
+      font-size: 15px;
+      color: #ffffff;
+    }
+    .name-title{
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #ffffff;
+    }
+    .name-input{
+      height:24px;
+      padding: 5px 15px;
+      outline: none;
+      font-size: 18px;
+      color: #01aefb;
+      background: rgba(0,0,0,0);
+      border-bottom: 1px solid #ffffff;
+    }
+  }
 }
 .talk-cont{
   padding: 5px 5px 100px;
@@ -250,7 +307,7 @@ html,body{
 }
 .talk-edit{
   position: fixed;
-  bottom: 2px;
+  bottom: 1px;
   width: 100%;
   height: 90px;
   max-width:598px;
