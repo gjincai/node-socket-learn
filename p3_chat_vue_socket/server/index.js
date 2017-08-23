@@ -13,19 +13,20 @@ app.get('/', function(req, res){
   res.send('<h1>Hello world</h1>');
 });
 
-var userName = ''
+var mes = ''
 var userNumber = 0
 
 io.on('connection', function(socket){
-  socket.emit('open', {data: 'link success'})
   socket.emit('news', {data: '特大新闻国务院放大假了啊'})
   socket.on('chat', function (data) {
     console.log(data)
   })
+
   socket.on('join', function (data) {
-    userName = data.userName
+    mes = data
     ++userNumber
-    console.log(userName)
+    socket.broadcast.emit('joinSuc', mes)
+    // 当前人数，加入还是退出
   })
   socket.on('disconnect', function () {
     --userNumber

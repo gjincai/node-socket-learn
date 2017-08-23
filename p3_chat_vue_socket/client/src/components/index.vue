@@ -4,119 +4,36 @@
       <div class="name">
         <h3 class="name-tip">Let us chat together!</h3>
         <h3 class="name-title">What's your nickname?(<=10)</h3>
-        <input class="name-input" type="text" maxlength="10" v-model="userName" @keyup.enter="addUserName" />
+        <input class="name-input" type="text" maxlength="10" v-model="mineName" @keyup.enter="addUserName" />
       </div>
     </div>
     <div v-if="hasUserName" class="talk-cont">
       <ul class="cont-ul">
-        <li class="mes-li mes-li-left">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name">用户a<span class="time">2017/08/20/11:50</span> </p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
+        <li class="mes-li" v-for="log in logMsg" :class="[log.m_mes === '' ? 'mes-li-center' : (mineName === log.m_name ? 'mes-li-right' : 'mes-li-left')]">
+          <div class="li-head" v-if="log.m_mes !== ''"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
+          <div class="li-box" v-if="log.m_mes !== ''">
+            <p class="box-name">{{log.m_name}}<span class="time">{{log.m_time}}</span> </p>
+            <p class="box-mes">{{log.m_mes}}</p>
           </div>
+          <p class="li-text" v-if="log.m_mes === ''">{{log.m_name}} 加入还是退出 {{log.m_time}}</p>
         </li>
-        <li class="mes-li mes-li-left">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name">用户a<span class="time">2017/08/20/11:50</span> </p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-left">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name">用户a<span class="time">2017/08/20/11:50</span> </p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-right">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name"><span class="time">2017/08/20/11:50</span>用户a</p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-left">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name">用户a<span class="time">2017/08/20/11:50</span> </p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-left">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name">用户a<span class="time">2017/08/20/11:50</span> </p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-right">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name"><span class="time">2017/08/20/11:50</span>用户a</p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-right">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name"><span class="time">2017/08/20/11:50</span>用户a</p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-center">
-          <p class="li-text">2017/08/20/11:50 谁退出谁加入啦这是消息推送状态提醒</p>
-        </li>
-        <li class="mes-li mes-li-right">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name"><span class="time">2017/08/20/11:50</span>用户a</p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-right">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name"><span class="time">2017/08/20/11:50</span>用户a</p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-right">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name"><span class="time">2017/08/20/11:50</span>用户a</p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-right">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name"><span class="time">2017/08/20/11:50</span>用户a</p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-right">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name"><span class="time">2017/08/20/11:50</span>用户a</p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-right">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name"><span class="time">2017/08/20/11:50</span>用户a</p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
-        <li class="mes-li mes-li-right">
-          <div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box">
-            <p class="box-name"><span class="time">2017/08/20/11:50</span>用户a</p>
-            <p class="box-mes">哈哈哈哈哈哈哈哈</p>
-          </div>
-        </li>
+        <!--<li class="mes-li mes-li-left">-->
+          <!--<div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>-->
+          <!--<div class="li-box">-->
+            <!--<p class="box-name">用户a<span class="time">2017/08/20/11:50</span> </p>-->
+            <!--<p class="box-mes">哈哈哈哈哈哈哈哈</p>-->
+          <!--</div>-->
+        <!--</li>-->
+        <!--<li class="mes-li mes-li-center">-->
+          <!--<p class="li-text">2017/08/20/11:50 谁退出谁加入啦这是消息推送状态提醒</p>-->
+        <!--</li>-->
+        <!--<li class="mes-li mes-li-right">-->
+          <!--<div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>-->
+          <!--<div class="li-box">-->
+            <!--<p class="box-name"><span class="time">2017/08/20/11:50</span>用户a</p>-->
+            <!--<p class="box-mes">哈哈哈哈哈哈哈哈</p>-->
+          <!--</div>-->
+        <!--</li>-->
       </ul>
     </div>
     <div v-if="hasUserName" class="talk-edit">
@@ -137,33 +54,67 @@ export default {
   data () {
     return {
       hasUserName: false,
-      userName: '',
-      socket: null
+      mineName: '',
+      socket: null,
+      date: new Date(),
+      mes: {
+        m_time: null,
+        m_head: '',
+        m_name: '',
+        m_mes: ''
+      },
+      logMsg: [
+        {
+          m_time: '8月01日 11:31',
+          m_head: '',
+          m_name: 'test1',
+          m_mes: '测试聊天'
+        },
+        {
+          m_time: '8月01日 11:32',
+          m_head: '',
+          m_name: 'test2',
+          m_mes: ''
+        },
+        {
+          m_time: '8月01日 11:33',
+          m_head: '',
+          m_name: 'test3',
+          m_mes: '测试聊天'
+        }
+      ]
     }
   },
   created () {
-    // this.addNameLogin()
+    // this.addUserName()
   },
   methods: {
     addUserName () {
-      this.userName = this.userName.replace(/\s+/g, '')
-      if (this.userName.length > 0) {
-        console.log(this.userName.length)
+      this.mineName = this.mineName.replace(/\s+/g, '')
+      this.mes.m_name = this.mineName
+      if (this.mes.m_name.length > 0) {
         this.socket = io.connect('http://localhost:8081')
-        this.socket.emit('join', {userName: this.userName})
+        this.mes.m_time = (this.date.getMonth() + 1) + '月' + this.date.getDate() + '日 ' + this.date.getHours() + ':' + this.date.getMinutes()
+        this.socket.emit('join', this.mes)
         // change show
         this.hasUserName = true
+        this.chat()
       }
     },
-    testChat () {
-      this.socket.on('open', function (data) {
-        console.log(data)
-      })
+    chat () {
       this.socket.on('news', function (data) {
         console.log(data)
-        // this.socket.emit('chat', {msg: 'i had got the news'})  // this指向报错
       })
       this.socket.emit('chat', {msg: 'i had got the news'})
+      let that = this
+      this.socket.on('joinSuc', function (data) {
+        that.mes = data
+        that.logMsg.push(data)
+        that.updateLog(data)
+      })
+    },
+    updateLog (mes) {
+      console.log(mes)
     }
   }
 }
@@ -250,6 +201,7 @@ html,body{
         color: #01aefb;
         .time{
           display: inline-block;
+          margin: 0 10px;
           color: #b8b8bb;
         }
       }
