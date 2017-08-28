@@ -15,7 +15,7 @@
             <p class="box-name">{{log.m_name}}<span class="time">{{log.m_time}}</span> </p>
             <p class="box-mes">{{log.m_mes}}</p>
           </div>
-          <p class="li-text" v-if="log.m_mes === ''">{{log.m_name}} 加入还是退出 {{log.m_time}}</p>
+          <p class="li-text" v-if="log.m_mes === ''">{{log.m_name}} 加入, {{log.m_time}} 当前人数: {{userNumber}}</p>
         </li>
         <!--<li class="mes-li mes-li-left">-->
           <!--<div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>-->
@@ -56,6 +56,7 @@ export default {
       hasUserName: false,
       mineName: '',
       socket: null,
+      userNumber: 0,
       date: new Date(),
       mes: {
         m_time: null,
@@ -108,9 +109,15 @@ export default {
       this.socket.emit('chat', {msg: 'i had got the news'})
       let that = this
       this.socket.on('joinSuc', function (data) {
-        that.mes = data
-        that.logMsg.push(data)
-        that.updateLog(data)
+        console.log(data)
+        that.mes = data.mes
+        that.userNumber = data.userNumber
+        that.logMsg.push(data.mes)
+        that.updateLog(data.mes)
+      })
+      this.socket.on('quit', function (data) {
+        that.userNumber = data.userNumber
+        that.logMsg.push(data.m_name)
       })
     },
     updateLog (mes) {

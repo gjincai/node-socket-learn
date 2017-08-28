@@ -25,12 +25,20 @@ io.on('connection', function(socket){
   socket.on('join', function (data) {
     mes = data
     ++userNumber
-    socket.broadcast.emit('joinSuc', mes)
+    console.log(userNumber)
+    socket.broadcast.emit('joinSuc', {mes, userNumber})
     // 当前人数，加入还是退出
   })
   socket.on('disconnect', function () {
     --userNumber
     console.log(userNumber)
+    var date = new Date()
+    var m_time =  (date.getMonth() + 1) + '月' + date.getDate() + '日 ' + date.getHours() + ':' + date.getMinutes()
+    socket.broadcast.emit('quit', {
+      m_name: socket.username,
+      m_time: m_time,
+      userNumber: userNumber
+    });
   })
 });
 
