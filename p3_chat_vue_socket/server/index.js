@@ -22,11 +22,13 @@ io.on('connection', function(socket){
     console.log(data)
   })
 
-  socket.on('join', function (data) {
+  socket.on('userJoining', function (data) {
     mes = data
+    socket.nowName = mes.m_name
     ++userNumber
     console.log(userNumber)
-    socket.broadcast.emit('joinSuc', {mes, userNumber})
+    mes.m_num = userNumber
+    socket.broadcast.emit('userJoined', {mes})
     // 当前人数，加入还是退出
   })
   socket.on('disconnect', function () {
@@ -34,11 +36,22 @@ io.on('connection', function(socket){
     console.log(userNumber)
     var date = new Date()
     var m_time =  (date.getMonth() + 1) + '月' + date.getDate() + '日 ' + date.getHours() + ':' + date.getMinutes()
-    socket.broadcast.emit('quit', {
-      m_name: socket.username,
-      m_time: m_time,
-      userNumber: userNumber
+    socket.broadcast.emit('userQuit', {
+      mes: {
+        m_time: m_time,
+        m_name: socket.nowName,
+        m_type: 'center',
+        m_mes: '退出',
+        m_num: userNumber
+      }
     });
+  })
+  // 接收消息
+  socket.on('sendChat', function (data) {
+    mes = data.chat
+    console.log(mes)
+    socket.broadcast.emit('newChat', {mes})
+    // 当前人数，加入还是退出
   })
 });
 

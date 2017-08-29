@@ -9,39 +9,22 @@
     </div>
     <div v-if="hasUserName" class="talk-cont">
       <ul class="cont-ul">
-        <li class="mes-li" v-for="log in logMsg" :class="[log.m_mes === '' ? 'mes-li-center' : (mineName === log.m_name ? 'mes-li-right' : 'mes-li-left')]">
-          <div class="li-head" v-if="log.m_mes !== ''"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
-          <div class="li-box" v-if="log.m_mes !== ''">
+        <li class="mes-li" v-for="log in logMsg" :class="[log.m_type === 'center' ? 'mes-li-center' : (mineName === log.m_name ? 'mes-li-right' : 'mes-li-left')]">
+          <div class="li-head" v-if="log.m_type === 'sides'"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>
+          <div class="li-box" v-if="log.m_type === 'sides'">
             <p class="box-name">{{log.m_name}}<span class="time">{{log.m_time}}</span> </p>
             <p class="box-mes">{{log.m_mes}}</p>
           </div>
-          <p class="li-text" v-if="log.m_mes === ''">{{log.m_name}} 加入, {{log.m_time}} 当前人数: {{userNumber}}</p>
+          <p class="li-text" v-if="log.m_type === 'center'">{{log.m_name}} {{log.m_mes}}, 当前人数: {{log.m_num}} （{{log.m_time}}）</p>
         </li>
-        <!--<li class="mes-li mes-li-left">-->
-          <!--<div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>-->
-          <!--<div class="li-box">-->
-            <!--<p class="box-name">用户a<span class="time">2017/08/20/11:50</span> </p>-->
-            <!--<p class="box-mes">哈哈哈哈哈哈哈哈</p>-->
-          <!--</div>-->
-        <!--</li>-->
-        <!--<li class="mes-li mes-li-center">-->
-          <!--<p class="li-text">2017/08/20/11:50 谁退出谁加入啦这是消息推送状态提醒</p>-->
-        <!--</li>-->
-        <!--<li class="mes-li mes-li-right">-->
-          <!--<div class="li-head"><img src="http://img01.rastargame.com/p_upload/2017/0605/1496634201481713.png"/></div>-->
-          <!--<div class="li-box">-->
-            <!--<p class="box-name"><span class="time">2017/08/20/11:50</span>用户a</p>-->
-            <!--<p class="box-mes">哈哈哈哈哈哈哈哈</p>-->
-          <!--</div>-->
-        <!--</li>-->
       </ul>
     </div>
     <div v-if="hasUserName" class="talk-edit">
-      <textarea placeholder="请输入..." class="edit-text"></textarea>
+      <textarea placeholder="请输入..." class="edit-text" v-model="chat.m_mes"></textarea>
       <div class="edit-btn">
-        <a class="btn-a btn-send" href="javascript:;">发送</a>
         <a class="btn-a btn-clear" href="javascript:;">清空</a>
-        <a class="btn-a btn-exit" href="javascript:;">退出</a>
+        <a class="btn-a btn-send" href="javascript:;" @click="sendChat">发送</a>
+        <!--<a class="btn-a btn-exit" href="javascript:;">退出</a>-->
       </div>
     </div>
   </div>
@@ -56,32 +39,42 @@ export default {
       hasUserName: false,
       mineName: '',
       socket: null,
-      userNumber: 0,
       date: new Date(),
       mes: {
         m_time: null,
-        m_head: '',
         m_name: '',
-        m_mes: ''
+        m_type: '',
+        m_mes: '',
+        m_num: 1
+      },
+      chat: {
+        m_time: null,
+        m_name: this.mineName,
+        m_type: 'sides',
+        m_mes: '',
+        m_num: null
       },
       logMsg: [
         {
           m_time: '8月01日 11:31',
-          m_head: '',
           m_name: 'test1',
-          m_mes: '测试聊天'
+          m_type: 'sides',
+          m_mes: '测试聊天1',
+          m_num: 1
         },
         {
           m_time: '8月01日 11:32',
-          m_head: '',
           m_name: 'test2',
-          m_mes: ''
+          m_type: 'center',
+          m_mes: '加入/退出',
+          m_num: 1
         },
         {
           m_time: '8月01日 11:33',
-          m_head: '',
           m_name: 'test3',
-          m_mes: '测试聊天'
+          m_type: 'sides',
+          m_mes: '测试聊天2',
+          m_num: 1
         }
       ]
     }
@@ -96,32 +89,46 @@ export default {
       if (this.mes.m_name.length > 0) {
         this.socket = io.connect('http://localhost:8081')
         this.mes.m_time = (this.date.getMonth() + 1) + '月' + this.date.getDate() + '日 ' + this.date.getHours() + ':' + this.date.getMinutes()
-        this.socket.emit('join', this.mes)
+        this.mes.m_type = 'center'
+        this.mes.m_mes = '加入'
+        this.socket.emit('userJoining', this.mes)
         // change show
         this.hasUserName = true
-        this.chat()
+        this.joinChat()
       }
     },
-    chat () {
+    joinChat () {
       this.socket.on('news', function (data) {
         console.log(data)
       })
       this.socket.emit('chat', {msg: 'i had got the news'})
+
       let that = this
-      this.socket.on('joinSuc', function (data) {
+      this.socket.on('userJoined', function (data) {
         console.log(data)
         that.mes = data.mes
-        that.userNumber = data.userNumber
         that.logMsg.push(data.mes)
-        that.updateLog(data.mes)
       })
-      this.socket.on('quit', function (data) {
-        that.userNumber = data.userNumber
-        that.logMsg.push(data.m_name)
+      this.socket.on('userQuit', function (data) {
+        that.logMsg.push(data.mes)
       })
     },
-    updateLog (mes) {
-      console.log(mes)
+    sendChat () {
+      let that = this
+      that.chat.m_mes = that.chat.m_mes.replace(/\s+/g, '')
+      if (that.chat.m_mes.length > 0) {
+        console.log('chat:' + this.chat.m_mes)
+        that.chat.m_time = (that.date.getMonth() + 1) + '月' + that.date.getDate() + '日 ' + that.date.getHours() + ':' + that.date.getMinutes()
+        that.chat.m_name = that.mineName
+        that.logMsg.push(that.chat)
+        this.socket.emit('sendChat', {chat: that.chat})
+      } else {
+        console.log('none mes')
+      }
+      this.socket.on('newChat', function (data) {
+        console.log(data)
+        that.logMsg.push(data.mes)
+      })
     }
   }
 }
