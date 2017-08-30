@@ -17,11 +17,6 @@ var mes = ''
 var userNumber = 0
 
 io.on('connection', function(socket){
-  socket.emit('news', {data: '特大新闻国务院放大假了啊'})
-  socket.on('chat', function (data) {
-    console.log(data)
-  })
-
   socket.on('userJoining', function (data) {
     mes = data
     socket.nowName = mes.m_name
@@ -46,7 +41,7 @@ io.on('connection', function(socket){
       }
     });
   })
-  // 接收消息
+// 接收消息
   socket.on('sendChat', function (data) {
     mes = data.chat
     console.log(mes)

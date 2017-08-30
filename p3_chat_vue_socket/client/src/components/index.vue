@@ -20,7 +20,7 @@
       </ul>
     </div>
     <div v-if="hasUserName" class="talk-edit">
-      <textarea placeholder="请输入..." class="edit-text" v-model="chat.m_mes"></textarea>
+      <textarea placeholder="请输入..." class="edit-text" v-model="chat.m_mes" ref="editText"></textarea>
       <div class="edit-btn">
         <a class="btn-a btn-clear" href="javascript:;">清空</a>
         <a class="btn-a btn-send" href="javascript:;" @click="sendChat">发送</a>
@@ -98,12 +98,8 @@ export default {
       }
     },
     joinChat () {
-      this.socket.on('news', function (data) {
-        console.log(data)
-      })
-      this.socket.emit('chat', {msg: 'i had got the news'})
-
       let that = this
+      this.socket.removeAllListeners()
       this.socket.on('userJoined', function (data) {
         console.log(data)
         that.mes = data.mes
@@ -120,11 +116,14 @@ export default {
         console.log('chat:' + this.chat.m_mes)
         that.chat.m_time = (that.date.getMonth() + 1) + '月' + that.date.getDate() + '日 ' + that.date.getHours() + ':' + that.date.getMinutes()
         that.chat.m_name = that.mineName
-        that.logMsg.push(that.chat)
+        that.logMsg.push({m_time: that.chat.m_time, m_name: that.chat.m_name, m_type: that.chat.m_type, m_mes: that.chat.m_mes, m_num: that.chat.m_num})
         this.socket.emit('sendChat', {chat: that.chat})
+        that.chat.m_mes = ''
+        that.$refs.editText.focus()
       } else {
         console.log('none mes')
       }
+      this.socket.removeAllListeners()
       this.socket.on('newChat', function (data) {
         console.log(data)
         that.logMsg.push(data.mes)
@@ -254,6 +253,7 @@ html,body{
       .box-name{
         text-align: right;
         .time{
+          float: left;
           margin-right:10px;
         }
       }
