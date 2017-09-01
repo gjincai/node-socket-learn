@@ -31,7 +31,6 @@
 </template>
 
 <script>
-//  import './../sass/index.scss'
 import io from 'socket.io-client'
 export default {
   data () {
@@ -79,9 +78,6 @@ export default {
       ]
     }
   },
-  created () {
-    // this.addUserName()
-  },
   methods: {
     addUserName () {
       this.mineName = this.mineName.replace(/\s+/g, '')
@@ -101,11 +97,17 @@ export default {
       let that = this
       this.socket.removeAllListeners()
       this.socket.on('userJoined', function (data) {
+        console.log('userJoined')
         console.log(data)
         that.mes = data.mes
         that.logMsg.push(data.mes)
       })
       this.socket.on('userQuit', function (data) {
+        console.log('userQuit')
+        that.logMsg.push(data.mes)
+      })
+      this.socket.on('newChat', function (data) {
+        console.log(data)
         that.logMsg.push(data.mes)
       })
     },
@@ -123,11 +125,6 @@ export default {
       } else {
         console.log('none mes')
       }
-      this.socket.removeAllListeners()
-      this.socket.on('newChat', function (data) {
-        console.log(data)
-        that.logMsg.push(data.mes)
-      })
     }
   }
 }
